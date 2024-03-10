@@ -1,0 +1,92 @@
+{% load static %}
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Management System</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+
+        header {
+            background-color: #4CAF50; /* Change color to green */
+            color: #fff;
+            padding: 10px;
+            text-align: right;
+        }
+
+        header button {
+            background-color: inherit; /* Inherit the background color of the header */
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            text-align: right;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+        }
+
+        nav {
+            display: none; /* Remove the navbar */
+        }
+
+        section {
+            padding: 20px;
+            text-align: center;
+            margin-top: -15px; /* Extend the green color up */
+        }
+
+
+        footer {
+            background-color: #4CAF50; /* Change color to green */
+            color: #fff;
+            padding: 10px;
+            text-align: center;
+
+            navbar-brand{
+
+        }
+    </style>
+</head>
+<body>
+    <header>
+
+       <button onclick="location.href='login.html'">Login</button>
+       <button onclick="location.href='registration.html'">Register</button>
+
+
+    </header>
+
+    <section>
+        <h2>Welcome to our Task Management System</h2>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <img src="{% static 'img.png' %}" width="500" height="500">
+                    <img src="{% static 'img_1.png' %}" width="500" height="500">
+
+                </div>
+            </div>
+
+
+        </div>
+
+        <p>Efficiently organize and manage your tasks with our user-friendly interface. Stay on top of your work and boost productivity.</p>
+
+
+        <p>"An efficient task management system empowers individuals and teams to seamlessly organize, prioritize, and track their work, fostering collaboration and productivity in achieving their goals."</p>
+    </section>
+
+    <footer>
+        &copy; 2024 Task Management System
+    </footer>
+</body>
+</html>

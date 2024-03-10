@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calendar</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/boxicons@2.1.0/css/boxicons.min.css">
+  <style>
+    body, html {
+      font-family: "Poppins", sans-serif;
+      background-color: #e4e9f7;
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .calendar-container {
+      width: 100%;
+      max-width: 800px;
+      background-color: #fff;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .calendar-header {
+      background-color: #dc143c;
+      color: #fff;
+      text-align: center;
+      padding: 15px;
+      font-size: 18px;
+      font-weight: bold;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .calendar-header span {
+      cursor: pointer;
+    }
+
+    .calendar-days {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 5px;
+      padding: 10px;
+    }
+
+    .calendar-day {
+      text-align: center;
+      padding: 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .calendar-day:hover {
+      background-color: #dc143c;
+      color: #fff;
+    }
+
+    .calendar-body {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 5px;
+      padding: 10px;
+    }
+
+    .calendar-day-empty {
+      visibility: hidden;
+    }
+  </style>
+</head>
+<body>
+  <div class="calendar-container">
+    <div class="calendar-header">
+      <span class="bx bx-chevron-left" onclick="prevMonth()"></span>
+      <span id="monthYear"></span>
+      <span class="bx bx-chevron-right" onclick="nextMonth()"></span>
+    </div>
+    <div class="calendar-days">
+      <div class="calendar-day">Sun</div>
+      <div class="calendar-day">Mon</div>
+      <div class="calendar-day">Tue</div>
+      <div class="calendar-day">Wed</div>
+      <div class="calendar-day">Thu</div>
+      <div class="calendar-day">Fri</div>
+      <div class="calendar-day">Sat</div>
+    </div>
+    <div class="calendar-body"></div>
+  </div>
+<script>
+    const calendarBody = document.querySelector('.calendar-body');
+    const monthYearElement = document.getElementById('monthYear');
+    let currentMonth = new Date().getMonth();
+    let currentYear = new Date().getFullYear();
+    let storedTasks = JSON.parse(localStorage.getItem('tasks')) || [];
+
+    // Function to get the number of days in a month
+    function daysInMonth(month, year) {
+      return new Date(year, month + 1, 0).getDate();
+    }
+
+    // Function to get the day of the week for the first day of the month
+    function firstDayOfMonth(month, year) {
+      return new Date(year, month, 1).getDay();
+    }
+
+    // Function to populate the calendar days
+    function populateCalendarDays() {
+      calendarBody.innerHTML = '';
+      const totalDays = daysInMonth(currentMonth, currentYear);
+      const firstDay = firstDayOfMonth(currentMonth, currentYear);
+
+      // Add empty cells for the days before the first day of the month
+      for (let i = 0; i < firstDay; i++) {
+        const emptyCell = document.createElement('div');
+        emptyCell.classList.add('calendar-day-empty');
+        calendarBody.appendChild(emptyCell);
+      }
+
+      // Populate the calendar days
+      for (let day = 1; day <= totalDays; day++) {
+        const dayElement = document.createElement('div');
+        dayElement.classList.add('calendar-day');
+        dayElement.textContent = day;
+
+        // Add click event listener to each day
+        dayElement.addEventListener('click', () => showTasksForDate(day, currentMonth, currentYear));
+
+        calendarBody.appendChild(dayElement);
+      }
+
+      // Update the month and year display
+      const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+      monthYearElement.textContent = `${monthNames[currentMonth]} ${currentYear}`;
+    }
+
+    // Function to show tasks for a specific date
+    function showTasksForDate(day, month, year) {
+      const selectedDate = new Date(year, month, day);
+      const formattedDate = selectedDate.toISOString().split('T')[0]; // Convert to YYYY-MM-DD format
+
+      const tasksForDate = storedTasks.filter(task => task.dueDate === formattedDate);
+
+      if (tasksForDate.length > 0) {
+        alert(`Tasks for ${formattedDate}:\n${tasksForDate.map(task => `- ${task.name}`).join('\n')}`);
+      } else {
+        alert(`No tasks for ${formattedDate}`);
+      }
+    }
+
+    // Function to move to the previous month
+    function prevMonth() {
+      currentMonth--;
+      if (currentMonth < 0) {
+        currentMonth = 11;
+        currentYear--;
+      }
+      populateCalendarDays();
+    }
+
+    // Function to move to the next month
+    function nextMonth() {
+      currentMonth++;
+      if (currentMonth > 11) {
+        currentMonth = 0;
+        currentYear++;
+      }
+      populateCalendarDays();
+    }
+
+    // Call the function to populate the initial calendar
+    populateCalendarDays();
+  </script>
+</body>
+</html>

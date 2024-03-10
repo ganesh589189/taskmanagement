@@ -1,0 +1,119 @@
+add task:
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Task Form</title>
+</head>
+<body>
+    <style>
+        form{
+            background-color:none;
+            display: flex;
+            flex-direction: column;
+            padding: 2vw 4vw;
+            width: 60%;
+            max-width: 600px;
+        border-radius: 10px;
+
+
+
+        }
+        label{
+size: 0cap;
+        }
+        div{
+            display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+
+
+        }
+        body{
+            background-color: black ;
+
+            background-size: 750px;
+
+        }
+        form input,textarea,select{
+            border-radius:10px;
+            padding:10px;
+        }
+        form button{
+            border-radius:10px;
+            padding:20px;
+            background-color:rgb(137, 224, 195) ;
+        }
+
+
+    </style>
+    <h1 style="color:white" align="center">Add Task</h1>
+    <div>
+    <form  id="taskForm" action="viewtask.html" method="get"  >
+        <label style="color:white" for="taskName">Task Name:</label><br>
+        <input type="text" id="taskName" name="taskName" placeholder="Task Name" required><br><br>
+
+        <label style="color:white" for="taskDescription">Task Description:</label><br>
+        <textarea id="taskDescription" name="taskDescription" placeholder="Task Description:" required></textarea><br><br>
+
+        <label style="color:white" for="dueDate">Due Date:</label>
+        <input  type="date" id="dueDate" name="dueDate" required><br><br>
+
+         <label style="color:white" for="dueTime">Due Time:</label>
+    <input type="time" id="dueTime" name="dueTime" required><br><br>
+
+        <label style="color:white" for="priority">Priority:</label>
+        <select id="priority" name="priority">
+            <option value="high">High</option>
+            <option value="medium">Medium</option>
+            <option value="low">Low</option>
+        </select><br>
+
+        <button type="submit">Add Task</button>
+    </form>
+    </div>
+
+    <script>
+        document.getElementById("taskForm").addEventListener("submit", function(event) {
+            event.preventDefault(); // Prevent the default form submission
+
+            // Get the task name and description from the form
+            var taskName = document.getElementById("taskName").value;
+            var taskDescription = document.getElementById("taskDescription").value;
+            var dueDate = document.getElementById("dueDate").value;
+            var priority = document.getElementById("priority").value;
+            var dueTime = document.getElementById("dueTime").value;
+
+            // Create a new task object
+            var newTask = {
+                name: taskName,
+                description: taskDescription,
+                dueDate: dueDate,
+                dueTime: dueTime,
+                priority: priority
+            };
+
+            // Send the new task data to your backend for processing (e.g., via AJAX)
+
+            // Clear the form fields
+            document.getElementById("taskName").value = "";
+            document.getElementById("taskDescription").value = "";
+            document.getElementById("dueDate").value = "";
+            document.getElementById("dueTime").value = "";
+            document.getElementById("priority").value = "";
+
+            var existingTasks = JSON.parse(localStorage.getItem('tasks')) || [];
+
+
+            // Optionally, display a success message or update the UI
+            existingTasks.push(newTask);
+            alert("Task added successfully!");
+
+
+            localStorage.setItem('tasks', JSON.stringify(existingTasks));
+        });
+    </script>
+</body>
+</html>

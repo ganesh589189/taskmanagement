@@ -1,0 +1,189 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Task</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: black;
+            padding: 20px;
+            color: white;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #dda0dd;
+            color: white;
+        }
+
+        .editButton, .deleteButton {
+            cursor: pointer;
+            margin: 0;
+            padding: 0;
+            border: none;
+            background: none;
+            font-size: 16px;
+        }
+
+        .editButton::before {
+            content: "\1F589"; /* Unicode for pencil symbol */
+            color: #4CAF50;
+            margin-right: 10px;
+        }
+
+        .deleteButton::before {
+            content: "\1F5D1"; /* Unicode for trash bin symbol */
+            color: #FF0000;
+        }
+
+        .editInput {
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <h1>View Task</h1>
+
+    <table id="taskTable">
+        <thead>
+            <tr>
+                <th>Task Name</th>
+                <th>Task Description</th>
+                <th>Due Date</th>
+                <th>Due Time</th>
+                <th>Priority</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody id="taskBody"></tbody>
+    </table>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.js" integrity="sha512-fLGG3n+XrfMlPcYj/c0f1UnSbw8Vw+Dz4CsVTc4isxm2ZlDHzj/7VtSxLIvRNPXBUUoF7Djktp91F8sL9B7DmQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script>
+        // Retrieve all tasks from localStorage
+        var storedTasks = JSON.parse(localStorage.getItem('tasks')) || [];
+
+        // Sort tasks by due date in descending order
+        storedTasks.sort(function(a, b) {
+            return new Date(b.dueDate) - new Date(a.dueDate);
+        });
+
+        // Display each task in a table row on the "View Task" page
+        var taskBody = document.getElementById('taskBody');
+        storedTasks.forEach(function(task, index) {
+            var row = taskBody.insertRow();
+            row.innerHTML = `
+                <td class="taskName">${task.name}</td>
+                <td class="taskDescription">${task.description}</td>
+                <td class="dueDate">${task.dueDate}</td>
+                <td class="dueTime">${task.dueTime}</td>
+                <td class="priority">${task.priority}</td>
+                <td>
+                    <button class="editButton" onclick="editTask(${index})">&#x1F589;</button>
+                    <button class="deleteButton" onclick="deleteTask(${index})">&#x1F5D1;</button>
+                </td>
+            `;
+        });
+
+        // Function to go back to the previous page
+        function goBack() {
+            window.history.back();
+        }
+
+        // Function to edit a task
+        function editTask(index) {
+            // Get the row elements
+            var row = document.getElementById('taskBody').rows[index + 1];
+
+            // Replace task data with input fields for editing
+            row.cells[0].innerHTML = '<input class="editInput" type="text" value="' + storedTasks[index].name + '" onkeydown="saveOnEnter(event, ' + index + ')">';
+            row.cells[1].innerHTML = '<input class="editInput" type="text" value="' + storedTasks[index].description + '" onkeydown="saveOnEnter(event, ' + index + ')">';
+            row.cells[2].innerHTML = '<input class="editInput" type="text" value="' + storedTasks[index].dueDate + '" onkeydown="saveOnEnter(event, ' + index + ')">';
+            row.cells[3].innerHTML = '<input class="editInput" type="text" value="' + storedTasks[index].dueTime + '" onkeydown="saveOnEnter(event, ' + index + ')">';
+            row.cells[4].innerHTML = '<input class="editInput" type="text" value="' + storedTasks[index].priority + '" onkeydown="saveOnEnter(event, ' + index + ')">';
+
+            // Add a save button to save changes
+            row.cells[5].innerHTML = '<button class="editButton" onclick="saveTask(' + index + ')">&#x2714;</button>';
+        }
+
+        // Function to save changes after editing
+        function saveTask(index) {
+            var row = document.getElementById('taskBody').rows[index + 1];
+
+            // Update task data with input field values
+            storedTasks[index].name = row.cells[0].querySelector('.editInput').value;
+            storedTasks[index].description = row.cells[1].querySelector('.editInput').value;
+            storedTasks[index].dueDate = row.cells[2].querySelector('.editInput').value;
+            storedTasks[index].dueTime = row.cells[3].querySelector('.editInput').value;
+            storedTasks[index].priority = row.cells[4].querySelector('.editInput').value;
+
+            // Save changes to localStorage
+            localStorage.setItem('tasks', JSON.stringify(storedTasks));
+
+            // Refresh the page to reflect the changes
+            location.reload();
+        }
+
+        // Function to delete a task
+        function deleteTask(index) {
+            // Implement your delete logic here
+            storedTasks.splice(index, 1);
+            localStorage.setItem('tasks', JSON.stringify(storedTasks));
+            location.reload(); // Refresh the page after deletion
+        }
+
+        // Function to save changes on Enter key press
+        function saveOnEnter(event, index) {
+            if (event.key === 'Enter') {
+                saveTask(index);
+            }
+        }
+         function getEvents() {
+        var events = [];
+        storedTasks.forEach(function(task) {
+            events.push({
+                title: task.name,
+                start: task.dueDate,// Assuming dueDate is in the format YYYY-MM-DD
+                end:task.dueTime,
+                description: task.description,
+                priority: task.priority
+            });
+        });
+        return events;
+    }
+
+    // Initialize FullCalendar
+    document.addEventListener('DOMContentLoaded', function() {
+        var calendarEl = document.getElementById('calendar');
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            plugins: ['dayGrid'],
+            events: getEvents(),
+            dateClick: function(info) {
+                var clickedDate = info.date.format();
+                alert('Clicked on: ' + clickedDate);
+                // Implement logic to show tasks for the clicked date
+                // You can use the clickedDate to filter tasks for that date
+            }
+        });
+        calendar.render();
+    });
+    </script>
+</body>
+</html>
